@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dawo Mix Studio</title>
+  <link rel="stylesheet" href="studio.css">
+</head>
+<body>
+  <header class="studio-bar">
+    <div class="brand"><span>DAWO</span> MIX STUDIO</div>
+    <nav aria-label="Aplikace">
+      <button class="tab active" data-target="dawomix">Dawomix</button>
+      <button class="tab" data-target="cueflow">CUEFLOW <span id="transferBadge" hidden>!</span></button>
+    </nav>
+    <div id="status" role="status">Připraveno</div>
+  </header>
+  <main>
+    <iframe id="dawomix" class="panel active" src="dawomix/index.html" title="Dawomix"></iframe>
+    <iframe id="cueflow" class="panel" src="cueflow/index.html" title="CUEFLOW"></iframe>
+  </main>
+  <script src="studio.js"></script>
+</body>
+</html>

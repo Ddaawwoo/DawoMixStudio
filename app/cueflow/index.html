@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07090f">
+  <title>CUEFLOW — cue point manager</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Cueflow domů">
+        <img src="logo.png" alt="CUEFLOW">
+      </a>
+      <div class="top-actions source-actions">
+        <button class="source-button folder-source" data-source="device" aria-label="Importovat ze zařízení"><img src="source.png" alt=""></button>
+        <button class="source-button mega-source" data-source="mega" aria-label="Importovat z MEGA"><img src="mega.png" alt=""></button>
+        <button class="source-button drive-source" data-source="drive" aria-label="Importovat z Google Drive"><img src="googledrive.png" alt=""></button>
+        <button class="source-button dropbox-source" data-source="dropbox" aria-label="Importovat z Dropboxu"><img src="dropbox.png" alt=""></button>
+        <button class="icon-button settings-button" id="settingsButton" aria-label="Nastavení vzhledu">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="stats top-stats" aria-label="Statistiky knihovny">
+      <article><strong id="trackCount">0</strong><span>skladeb</span></article>
+      <article><strong id="cueCount">0</strong><span>cue pointů</span></article>
+      <article><strong id="readyPercent">0%</strong><span>připraveno</span></article>
+      <article><strong id="averageBpm">—</strong><span>průměr BPM</span></article>
+    </section>
+
+    <div class="search-row top-search">
+      <label class="search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="searchInput" type="search" placeholder="Hledat skladbu nebo interpreta…">
+      </label>
+      <button class="sort-button" id="sortButton" aria-label="Seřadit podle BPM">
+        <svg viewBox="0 0 24 24"><path d="M8 7h12M4 7h.01M8 12h9M4 12h.01M8 17h6M4 17h.01"/></svg>
+      </button>
+    </div>
+
+    <section class="inline-editor" id="cueEditor" hidden>
+      <header class="sheet-header">
+        <div>
+          <p class="eyebrow">CUE EDITOR · 8 HOT CUES</p>
+          <h2 id="sheetTitle">Název skladby</h2>
+          <p id="sheetArtist">Interpret</p>
+        </div>
+        <button class="close-button" id="closeEditor" aria-label="Zavřít editor">
+          <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+      <div class="waveform-wrap editor-waveform">
+        <div class="waveform-stage" id="waveformStage">
+          <div class="waveform" id="waveform"></div>
+          <div class="playhead" id="playhead"><span></span></div>
+        </div>
+        <div class="wave-time"><span id="currentTime">00:00.0</span><span id="durationTime">04:12.0</span></div>
+      </div>
+      <div class="editor-tools">
+        <div class="transport">
+          <button id="backButton" aria-label="O deset sekund zpět"><svg viewBox="0 0 24 24"><path d="M5 7v5h5M6 12a7 7 0 1 0 2-5"/><text x="8" y="16">10</text></svg></button>
+          <button class="transport-play" id="editorPlay" aria-label="Přehrát"><svg class="play-icon" viewBox="0 0 24 24"><path d="m9 6 9 6-9 6Z"/></svg><svg class="pause-icon" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></svg></button>
+          <button id="forwardButton" aria-label="O deset sekund vpřed"><svg viewBox="0 0 24 24"><path d="M19 7v5h-5M18 12a7 7 0 1 1-2-5"/><text x="6" y="16">10</text></svg></button>
+        </div>
+        <div class="editor-secondary-controls">
+          <div class="zoom-control">
+            <span>ZOOM</span>
+            <button id="zoomOut" aria-label="Oddálit waveformu">−</button>
+            <input id="waveZoom" type="range" min="1" max="8" value="1" step="0.5" aria-label="Přiblížení waveformy">
+            <button id="zoomIn" aria-label="Přiblížit waveformu">＋</button>
+            <strong id="zoomValue">1×</strong>
+          </div>
+          <button class="auto-cues-button" id="autoCues"><svg viewBox="0 0 24 24"><path d="m12 3 1.4 4.1L18 8.5l-4.6 1.4L12 14l-1.4-4.1L6 8.5l4.6-1.4L12 3ZM18.5 14l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/></svg>Automaticky sestavit</button>
+        </div>
+        <p class="sheet-hint">Vyber pozici ve waveformě a stiskni jeden z osmi cue slotů.</p>
+      </div>
+      <div class="cue-grid" id="cueGrid"></div>
+      <div class="cue-editor-actions">
+        <button class="save-button" id="saveCues"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>Uložit cue pointy</button>
+      </div>
+    </section>
+
+    <section class="library">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">KNIHOVNA</p>
+          <h2>Připrav si další track</h2>
+        </div>
+        <div class="library-actions">
+          <button class="save-library" id="saveLibraryButton" aria-label="Uložit skladby i s metadaty">
+            <svg viewBox="0 0 24 24"><path d="M5 4h12l2 2v14H5V4Zm3 0v6h8V4M8 20v-7h8v7"/></svg>
+            <span>Uložit skladby + metadata</span>
+          </button>
+          <button class="add-track" id="addTrackButton" aria-label="Přidat skladbu">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="filters" id="filters">
+        <button class="filter active" data-filter="all">Vše <span id="allCount">0</span></button>
+        <button class="filter" data-filter="ready">Připravené <span id="readyCount">0</span></button>
+        <button class="filter" data-filter="todo">K doplnění <span id="todoCount">0</span></button>
+      </div>
+      <div class="bulk-actions">
+        <label><input type="checkbox" id="selectAllTracks"> Vybrat vše</label>
+        <strong id="selectedCount">0 vybráno</strong>
+        <button id="exportTraktorButton" disabled>Traktor DJ (.nml)</button>
+        <button id="downloadSelectedButton" disabled>Stáhnout vybrané (.zip)</button>
+        <button id="sendToDawomixButton" disabled>Poslat do Dawomix</button>
+      </div>
+
+      <div class="track-list" id="trackList"></div>
+      <div class="empty-state" id="emptyState">
+        <span>＋</span>
+        <strong>Knihovna je prázdná</strong>
+        <p>Importuj první skladbu ze zařízení nebo cloudového úložiště.</p>
+        <button id="emptyImportButton">Importovat skladbu</button>
+      </div>
+    </section>
+  </main>
+
+  <aside class="player expanded-player" id="player">
+    <button class="player-button" id="playerButton" aria-label="Přehrát">
+      <svg class="play-icon" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></svg>
+      <svg class="pause-icon" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg>
+    </button>
+    <div class="now-playing">
+      <span id="nowPlayingLabel">PŘEHRÁVÁ SE</span>
+      <strong id="nowPlayingTitle">Vyber skladbu</strong>
+      <small id="nowPlayingArtist">Knihovna je připravená</small>
+    </div>
+    <button class="cue-shortcut" id="cueShortcut" aria-label="Otevřít cue pointy" disabled>CUE</button>
+    <div class="player-wave-wrap" id="playerWaveWrap">
+      <div class="player-waveform" id="playerWaveform"></div>
+      <span class="player-progress" id="playerProgress"></span>
+      <div class="player-times"><span id="playerCurrent">00:00</span><span id="playerDuration">00:00</span></div>
+    </div>
+  </aside>
+
+  <div class="sheet-backdrop" id="importBackdrop"></div>
+  <section class="import-dialog" id="importDialog" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+    <header><div><p class="eyebrow">IMPORT HUDBY</p><h2 id="importTitle">Odkud chceš importovat?</h2></div><button class="close-button" id="closeImport" aria-label="Zavřít"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header>
+    <div class="import-options">
+      <button class="import-option" id="deviceImport"><span class="import-icon"><img src="source.png" alt=""></span><strong>Zařízení</strong><small>MP3, WAV, AIFF, FLAC</small></button>
+      <button class="import-option" data-cloud="mega"><span class="import-icon"><img src="mega.png" alt=""></span><strong>MEGA</strong><small>Vybrat z cloudového disku</small></button>
+      <button class="import-option" data-cloud="dropbox"><span class="import-icon"><img src="dropbox.png" alt=""></span><strong>Dropbox</strong><small>Připojit účet a vybrat soubor</small></button>
+    </div>
+    <input type="file" id="audioInput" accept="audio/*,.aiff,.flac" multiple hidden>
+    <p class="import-note">Soubory zůstávají v zařízení. Cloudové služby vyžadují přihlášení k účtu.</p>
+  </section>
+
+  <div class="settings-backdrop" id="settingsBackdrop"></div>
+  <section class="settings-panel" id="settingsPanel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <header><div><p class="eyebrow">VZHLED APLIKACE</p><h2 id="settingsTitle">Nastavení</h2></div><button class="close-button" id="closeSettings" aria-label="Zavřít"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header>
+    <div class="setting-group">
+      <label>Barevné schéma</label>
+      <div class="theme-presets">
+        <button class="theme-preset active" data-theme="cyan"><i style="--a:#12e6f2;--b:#ff3c8e"></i><span>Neon</span></button>
+        <button class="theme-preset" data-theme="lime"><i style="--a:#b6ff00;--b:#ffe600"></i><span>Techno</span></button>
+        <button class="theme-preset" data-theme="violet"><i style="--a:#9d72ff;--b:#ff62ca"></i><span>Violet</span></button>
+        <button class="theme-preset" data-theme="orange"><i style="--a:#ff713c;--b:#ffc83d"></i><span>Sunset</span></button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <label>Pozadí</label>
+      <div class="background-presets">
+        <button class="background-preset active" data-bg="grid"><i class="bg-grid"></i><span>Mřížka</span></button>
+        <button class="background-preset" data-bg="black"><i class="bg-black"></i><span>Černé</span></button>
+        <button class="background-preset" data-bg="gradient"><i class="bg-gradient"></i><span>Gradient</span></button>
+        <button class="background-preset" data-bg="image"><i class="bg-image">＋</i><span>Vlastní</span></button>
+      </div>
+      <input type="file" id="backgroundInput" accept="image/*" hidden>
+    </div>
+    <div class="setting-group color-setting">
+      <div><label for="waveColor">Barva waveformu</label><small>Změna se projeví okamžitě</small></div>
+      <div class="wave-color-controls">
+        <input type="color" id="waveColor" value="#12e6f2">
+      </div>
+    </div>
+    <button class="reset-settings" id="resetSettings">Obnovit výchozí vzhled</button>
+  </section>
+  <audio id="audioElement"></audio>
+
+  <div class="toast" id="toast" role="status">Cue pointy byly uloženy</div>
+  <script src="app.js"></script>
+</body>
+</html>
