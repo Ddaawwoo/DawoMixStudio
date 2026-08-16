@@ -1,45 +1,7 @@
-const tabs = [...document.querySelectorAll(".tab")];
-const panels = [...document.querySelectorAll(".panel")];
-const status = document.querySelector("#status");
-const badge = document.querySelector("#transferBadge");
-
-function showPanel(id) {
-  tabs.forEach(tab => tab.classList.toggle("active", tab.dataset.target === id));
-  panels.forEach(panel => panel.classList.toggle("active", panel.id === id));
-  if (id === "cueflow") badge.hidden = true;
-}
-
-tabs.forEach(tab => tab.addEventListener("click", () => showPanel(tab.dataset.target)));
-
-window.DawoMixStudio = {
-  async transferPlaylist(playlist) {
-    const cueflow = document.querySelector("#cueflow");
-    const bridge = cueflow.contentWindow?.CueflowBridge;
-    if (!bridge) {
-      status.textContent = "CUEFLOW se ještě načítá…";
-      setTimeout(() => window.DawoMixStudio.transferPlaylist(playlist), 500);
-      return;
-    }
-    status.textContent = `Přenáším „${playlist.name}“…`;
-    try {
-      const count = await bridge.importPlaylist(playlist);
-      status.textContent = `Přeneseno: ${playlist.name} (${count} skladeb)`;
-      badge.hidden = false;
-      showPanel("cueflow");
-    } catch (error) {
-      console.error(error);
-      status.textContent = "Přenos se nezdařil";
-      alert(`Playlist se nepodařilo přenést: ${error.message}`);
-    }
-  },
-  async transferToDawomix(payload) {
-    const dawomix = document.querySelector("#dawomix");
-    const bridge = dawomix.contentWindow?.DawomixBridge;
-    if (!bridge) throw new Error("Dawomix ještě není připravený");
-    status.textContent = `Posílám ${payload.tracks.length} skladeb do Dawomix…`;
-    const result = await bridge.importFromCueflow(payload);
-    status.textContent = `Dawomix: vytvořen playlist „${result.name}“`;
-    showPanel("dawomix");
-    return result;
-  }
-};
+const tabs=[...document.querySelectorAll('.tab')];const sideItems=[...document.querySelectorAll('.side-item')];const panels=[...document.querySelectorAll('.panel')];const status=document.querySelector('#status');const badge=document.querySelector('#transferBadge');const activeLabel=document.querySelector('#activeModuleLabel');const startModule=document.querySelector('#startModule');const compactSidebar=document.querySelector('#compactSidebar');const rememberModule=document.querySelector('#rememberModule');const labels={home:'Home',dawomix:'Playlist Creator',analyzer:'Analyzer',cueflow:'Cue Point Editor','tag-editor':'Tag Editor',traktor:'Traktor Tools',settings:'Settings'};
+function showPanel(id,{persist=true}={}){if(!document.getElementById(id))return;tabs.forEach(tab=>tab.classList.toggle('active',tab.dataset.target===id));sideItems.forEach(item=>item.classList.toggle('active',item.dataset.target===id));panels.forEach(panel=>panel.classList.toggle('active',panel.id===id));if(id==='cueflow'&&badge)badge.hidden=true;if(activeLabel)activeLabel.textContent=labels[id]||id;if(status)status.textContent=`${labels[id]||id} připraven`;if(persist&&rememberModule?.checked)localStorage.setItem('dawo:lastModule',id)}
+function bindTargets(){document.querySelectorAll('[data-target]').forEach(el=>el.addEventListener('click',()=>showPanel(el.dataset.target)))}bindTargets();
+document.querySelector('#fullscreenBtn')?.addEventListener('click',async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){console.warn(e)}});
+const savedStart=localStorage.getItem('dawo:startModule');if(savedStart&&startModule)startModule.value=savedStart;startModule?.addEventListener('change',()=>localStorage.setItem('dawo:startModule',startModule.value));const compactSaved=localStorage.getItem('dawo:compactSidebar')==='1';if(compactSidebar){compactSidebar.checked=compactSaved;document.body.classList.toggle('compact',compactSaved);compactSidebar.addEventListener('change',()=>{document.body.classList.toggle('compact',compactSidebar.checked);localStorage.setItem('dawo:compactSidebar',compactSidebar.checked?'1':'0')})}const rememberSaved=localStorage.getItem('dawo:rememberModule');if(rememberModule){rememberModule.checked=rememberSaved===null?true:rememberSaved==='1';rememberModule.addEventListener('change',()=>localStorage.setItem('dawo:rememberModule',rememberModule.checked?'1':'0'))}const initial=(rememberModule?.checked&&localStorage.getItem('dawo:lastModule'))||savedStart||'dawomix';showPanel(initial,{persist:false});
+window.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey){const map={'1':'dawomix','2':'analyzer','3':'cueflow','4':'tag-editor','5':'traktor','6':'settings'};if(map[e.key]){e.preventDefault();showPanel(map[e.key])}}});
+window.DawoMixStudio={showPanel,async transferPlaylist(playlist){const cueflow=document.querySelector('#cueflow');const bridge=cueflow.contentWindow?.CueflowBridge;if(!bridge){status.textContent='Cue Point Editor se ještě načítá…';setTimeout(()=>window.DawoMixStudio.transferPlaylist(playlist),500);return}status.textContent=`Přenáším „${playlist.name}“…`;try{const count=await bridge.importPlaylist(playlist);status.textContent=`Přeneseno: ${playlist.name} (${count} skladeb)`;badge.hidden=false;showPanel('cueflow')}catch(error){console.error(error);status.textContent='Přenos se nezdařil';alert(`Playlist se nepodařilo přenést: ${error.message}`)}},async transferToDawomix(payload){const dawomix=document.querySelector('#dawomix');const bridge=dawomix.contentWindow?.DawomixBridge;if(!bridge)throw new Error('Playlist Creator ještě není připravený');status.textContent=`Posílám ${payload.tracks.length} skladeb do Playlist Creator…`;const result=await bridge.importFromCueflow(payload);status.textContent=`Playlist Creator: vytvořen playlist „${result.name}“`;showPanel('dawomix');return result}};
