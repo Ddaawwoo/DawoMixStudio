@@ -3,22 +3,98 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#070b12">
   <title>Dawo Mix Studio</title>
   <link rel="stylesheet" href="studio.css">
 </head>
 <body>
-  <header class="studio-bar">
-    <div class="brand"><span>DAWO</span> MIX STUDIO</div>
-    <nav aria-label="Aplikace">
-      <button class="tab active" data-target="dawomix">Dawomix</button>
-      <button class="tab" data-target="cueflow">CUEFLOW <span id="transferBadge" hidden>!</span></button>
-    </nav>
-    <div id="status" role="status">Připraveno</div>
-  </header>
-  <main>
-    <iframe id="dawomix" class="panel active" src="dawomix/index.html" title="Dawomix"></iframe>
-    <iframe id="cueflow" class="panel" src="cueflow/index.html" title="CUEFLOW"></iframe>
-  </main>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="brand" data-target="home" aria-label="Dawo Mix Studio domů">
+        <span class="brand-mark">D</span>
+        <span class="brand-copy"><strong>DAWO</strong><small>MIX STUDIO</small></span>
+      </button>
+
+      <nav class="plugin-nav" aria-label="Hudební nástroje">
+        <button class="tab active" data-target="dawomix"><span class="tab-icon">▤</span><span>Playlist Creator</span></button>
+        <button class="tab" data-target="analyzer"><span class="tab-icon">◫</span><span>Analyzer</span></button>
+        <button class="tab" data-target="cueflow"><span class="tab-icon">⌁</span><span>Cue Point Editor</span><span id="transferBadge" hidden>!</span></button>
+        <button class="tab" data-target="tag-editor"><span class="tab-icon">✎</span><span>Tag Editor</span></button>
+        <button class="tab" data-target="traktor"><span class="tab-icon">◈</span><span>Traktor Tools</span></button>
+        <button class="tab" data-target="settings"><span class="tab-icon">⚙</span><span>Settings</span></button>
+      </nav>
+
+      <div class="top-actions">
+        <button id="fullscreenBtn" class="icon-btn" title="Celá obrazovka">⛶</button>
+        <div class="connection"><span class="dot"></span><span id="status">Připraveno</span></div>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+      <button class="side-item" data-target="home" title="Home"><span>⌂</span><small>Home</small></button>
+      <div class="side-divider"></div>
+      <button class="side-item active" data-target="dawomix" title="Playlist Creator"><span>▤</span><small>Playlist</small></button>
+      <button class="side-item" data-target="analyzer" title="Analyzer"><span>◫</span><small>Analyze</small></button>
+      <button class="side-item" data-target="cueflow" title="Cue Point Editor"><span>⌁</span><small>Cues</small></button>
+      <button class="side-item" data-target="tag-editor" title="Tag Editor"><span>✎</span><small>Tags</small></button>
+      <button class="side-item" data-target="traktor" title="Traktor Tools"><span>◈</span><small>Traktor</small></button>
+      <div class="side-spacer"></div>
+      <button class="side-item" data-target="settings" title="Settings"><span>⚙</span><small>Settings</small></button>
+    </aside>
+
+    <main class="workspace">
+      <section id="home" class="panel dashboard-panel">
+        <div class="dashboard-head">
+          <div><p class="eyebrow">DAWO MUSIC WORKSPACE</p><h1>Tvoje hudební nástroje na jednom místě.</h1><p>Vyber modul a pracuj bez přepínání mezi samostatnými aplikacemi.</p></div>
+          <div class="workspace-status"><span class="dot"></span> Studio připraveno</div>
+        </div>
+        <div class="module-grid">
+          <button class="module-card live" data-target="dawomix"><span class="module-icon">▤</span><strong>Playlist Creator</strong><small>Tvorba, správa a přenos playlistů</small><em>OPEN</em></button>
+          <button class="module-card" data-target="analyzer"><span class="module-icon">◫</span><strong>Analyzer</strong><small>BPM, Key, waveform a hudební analýza</small><em>OPEN</em></button>
+          <button class="module-card live" data-target="cueflow"><span class="module-icon">⌁</span><strong>Cue Point Editor</strong><small>Hot cues, grid a příprava tracků</small><em>OPEN</em></button>
+          <button class="module-card" data-target="tag-editor"><span class="module-icon">✎</span><strong>Tag Editor</strong><small>Metadata, názvy, cover a organizace</small><em>OPEN</em></button>
+          <button class="module-card" data-target="traktor"><span class="module-icon">◈</span><strong>Traktor Tools</strong><small>Export, příprava kolekce a Traktor workflow</small><em>OPEN</em></button>
+          <button class="module-card" data-target="settings"><span class="module-icon">⚙</span><strong>Settings</strong><small>Nastavení studia a modulů</small><em>OPEN</em></button>
+        </div>
+      </section>
+
+      <iframe id="dawomix" class="panel active" src="dawomix/index.html" title="Playlist Creator"></iframe>
+      <iframe id="cueflow" class="panel" src="cueflow/index.html" title="Cue Point Editor"></iframe>
+
+      <section id="analyzer" class="panel native-panel">
+        <div class="tool-head"><div><p class="eyebrow">ANALYSIS MODULE</p><h2>Analyzer</h2><p>Centrální prostor pro analýzu tracků.</p></div><span class="module-state">READY FOR ENGINE</span></div>
+        <div class="empty-tool"><div class="big-icon">◫</div><h3>Audio Analyzer</h3><p>Sem napojíme tvůj analyzer pro BPM, beatgrid, key, waveform, gain a další údaje.</p><button class="primary-action" data-target="dawomix">Vybrat track z Playlist Creator</button></div>
+      </section>
+
+      <section id="tag-editor" class="panel native-panel">
+        <div class="tool-head"><div><p class="eyebrow">METADATA MODULE</p><h2>Tag Editor</h2><p>Hromadná i jednotlivá úprava hudebních metadat.</p></div><span class="module-state">DESKTOP MODULE</span></div>
+        <div class="editor-mock">
+          <div class="mock-list"><strong>TRACKS</strong><div class="mock-row active">Selected Track.mp3</div><div class="mock-row">Next Track.flac</div><div class="mock-row">Club Edit.wav</div></div>
+          <div class="mock-form"><label>Title<input placeholder="Track title"></label><label>Artist<input placeholder="Artist"></label><label>Album<input placeholder="Album"></label><div class="split"><label>BPM<input placeholder="128.00"></label><label>Key<input placeholder="8A"></label></div><label>Genre<input placeholder="Genre"></label><button class="primary-action">Save metadata</button></div>
+        </div>
+      </section>
+
+      <section id="traktor" class="panel native-panel">
+        <div class="tool-head"><div><p class="eyebrow">DJ INTEGRATION</p><h2>Traktor Tools</h2><p>Příprava skladeb a dat pro Native Instruments Traktor.</p></div><span class="module-state">WORKSPACE</span></div>
+        <div class="tool-cards"><article><span>⇄</span><h3>Collection Sync</h3><p>Import a export playlistů a kolekce.</p></article><article><span>⌁</span><h3>Cue Transfer</h3><p>Přenos hot cues a markerů.</p></article><article><span>◫</span><h3>Analysis Data</h3><p>Příprava BPM, key a beatgrid dat.</p></article></div>
+      </section>
+
+      <section id="settings" class="panel native-panel">
+        <div class="tool-head"><div><p class="eyebrow">STUDIO</p><h2>Settings</h2><p>Nastavení Dawo Mix Studio.</p></div></div>
+        <div class="settings-grid">
+          <label><span>Startovní modul</span><select id="startModule"><option value="dawomix">Playlist Creator</option><option value="analyzer">Analyzer</option><option value="cueflow">Cue Point Editor</option><option value="tag-editor">Tag Editor</option><option value="traktor">Traktor Tools</option><option value="home">Home</option></select></label>
+          <label><span>Kompaktní sidebar</span><input id="compactSidebar" type="checkbox"></label>
+          <label><span>Zapamatovat poslední modul</span><input id="rememberModule" type="checkbox" checked></label>
+        </div>
+      </section>
+    </main>
+
+    <footer class="statusbar">
+      <span><b>DAWO MIX STUDIO</b> Desktop Workspace</span>
+      <span id="activeModuleLabel">Playlist Creator</span>
+      <span class="status-right"><span class="dot"></span> Local workspace</span>
+    </footer>
+  </div>
   <script src="studio.js"></script>
 </body>
 </html>
