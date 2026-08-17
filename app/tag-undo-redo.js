@@ -1,0 +1,15 @@
+(()=>{
+  if(window.__dawoTagUndoRedo)return;window.__dawoTagUndoRedo=true;
+  const $=s=>document.querySelector(s),fields=['tagTitle','tagArtist','tagAlbum','tagBpm','tagKey','tagGenre'];
+  let undo=[],redo=[],last='',applying=false,currentUid='';
+  const snap=()=>{const uid=$('#tagUid')?.value||'';if(!uid)return'';return JSON.stringify({uid,values:Object.fromEntries(fields.map(id=>[id,$('#'+id)?.value||'']))})};
+  const update=()=>{const u=$('#dawoTagUndo'),r=$('#dawoTagRedo');if(u)u.disabled=!undo.length;if(r)r.disabled=!redo.length};
+  const reset=()=>{undo=[];redo=[];last=snap();currentUid=$('#tagUid')?.value||'';update()};
+  function record(){if(applying)return;const uid=$('#tagUid')?.value||'';if(uid!==currentUid){reset();return}const s=snap();if(!s||s===last)return;if(last)undo.push(last);if(undo.length>80)undo.shift();last=s;redo=[];update()}
+  async function apply(raw){if(!raw)return;const v=JSON.parse(raw);if(v.uid!==($('#tagUid')?.value||''))return;applying=true;for(const [id,val] of Object.entries(v.values)){const el=$('#'+id);if(el){el.value=val;el.dispatchEvent(new Event('input',{bubbles:true}))}}last=snap();applying=false;update()}
+  async function goUndo(){if(!undo.length)return;const cur=snap();if(cur)redo.push(cur);await apply(undo.pop())}
+  async function goRedo(){if(!redo.length)return;const cur=snap();if(cur)undo.push(cur);await apply(redo.pop())}
+  function install(){const form=$('#tagEditorForm');if(!form||$('#dawoTagHistory'))return;const box=document.createElement('div');box.id='dawoTagHistory';box.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px';box.innerHTML='<button id="dawoTagUndo" class="secondary-action" type="button">↶ Undo</button><button id="dawoTagRedo" class="secondary-action" type="button">↷ Redo</button>';form.insertBefore(box,form.querySelector('button[type="submit"]'));box.querySelector('#dawoTagUndo').onclick=goUndo;box.querySelector('#dawoTagRedo').onclick=goRedo;fields.forEach(id=>$('#'+id)?.addEventListener('input',()=>setTimeout(record,0)));document.querySelector('#tagTrackList')?.addEventListener('click',()=>setTimeout(reset,100),true);reset()}
+  document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey))return;if(!document.getElementById('tag-editor')?.classList.contains('active'))return;const k=e.key.toLowerCase();if(k==='z'&&!e.shiftKey){e.preventDefault();goUndo()}else if(k==='y'||(k==='z'&&e.shiftKey)){e.preventDefault();goRedo()}},true);
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',install):install();new MutationObserver(install).observe(document.body,{childList:true,subtree:true});
+})();
