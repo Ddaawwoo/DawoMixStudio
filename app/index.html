@@ -56,13 +56,14 @@
         <div class="library-module-toolbar">
           <label class="file-action">＋ Přidat audio<input id="libraryModuleFiles" type="file" accept="audio/*" multiple hidden></label>
           <input id="libraryModuleSearch" class="library-module-search" type="search" placeholder="Hledat title, artist, key, genre…">
-          <button id="libraryModuleDedupe" class="danger-action" type="button">≋ Najít a smazat duplicity</button>
-          <button id="libraryModuleAnalyzeAll" class="secondary-action" type="button">⌁ Analyzovat vše</button>
+          <button id="libraryModuleFindDuplicates" class="secondary-action" type="button">≋ Najít duplicity</button>
+          <button id="libraryModuleDeleteSelected" class="danger-action" type="button" disabled>⌫ Smazat vybrané</button>
+          <button id="libraryOpenAnalyzer" class="next-action" type="button">Otevřít v Analyzeru →</button>
           <button id="libraryModuleSync" class="secondary-action" type="button">↻ Synchronizovat</button>
         </div>
         <div id="libraryDuplicateSummary" class="library-duplicate-summary" hidden></div>
         <div class="library-module-table">
-          <div class="library-module-head"><span>TRACK</span><span>ARTIST</span><span>BPM</span><span>KEY</span><span>CUE POINTS</span><span></span></div>
+          <div class="library-module-head"><span><label class="library-check-all"><input id="librarySelectAll" type="checkbox"> Vybrat vše</label></span><span>TRACK</span><span>ARTIST</span><span>BPM</span><span>KEY</span><span>CUE POINTS</span><span></span></div>
           <div id="libraryModuleRows"></div>
         </div>
       </section>
@@ -106,9 +107,9 @@
   <script src="traktor-nml.js"></script>
   <script src="studio.js"></script>
   <script src="library-module.js"></script>
-  <script src="library-dedupe-fix.js"></script>
   <script src="analyzer.js"></script>
   <script src="traktor-collection-ui.js"></script>
   <script src="visual-upgrade.js"></script>
+  <script src="workspace-next.js"></script>
 </body>
 </html>
