@@ -10,13 +10,14 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <button class="brand" data-target="home" aria-label="Dawo Mix Studio domů"><span class="brand-mark">D</span><span class="brand-copy"><strong>DAWO</strong><small>MIX STUDIO</small></span></button>
+      <button class="brand" data-target="home" aria-label="Dawo Mix Studio domů"><span class="brand-mark">D</span></button>
       <nav class="plugin-nav" aria-label="Hudební nástroje">
-        <button class="tab active" data-target="dawomix"><span class="tab-icon">▤</span><span>Playlist Creator</span></button>
-        <button class="tab" data-target="analyzer"><span class="tab-icon">◫</span><span>Analyzer</span></button>
-        <button class="tab" data-target="cueflow"><span class="tab-icon">⌁</span><span>Cue Point Editor</span><span id="transferBadge" hidden>!</span></button>
-        <button class="tab" data-target="tag-editor"><span class="tab-icon">✎</span><span>Tag Editor</span></button>
-        <button class="tab" data-target="traktor"><span class="tab-icon">◈</span><span>Traktor Tools</span></button>
+        <button class="tab active" data-target="dawomix"><span class="tab-icon">☷</span><span>Playlist Creator</span></button>
+        <button class="tab" data-target="library"><span class="tab-icon">▦</span><span>Library</span></button>
+        <button class="tab" data-target="analyzer"><span class="tab-icon">⌁</span><span>Analyzer</span></button>
+        <button class="tab" data-target="cueflow"><span class="tab-icon">◎</span><span>Cue Point Editor</span><span id="transferBadge" hidden>!</span></button>
+        <button class="tab" data-target="tag-editor"><span class="tab-icon">◇</span><span>Tag Editor</span></button>
+        <button class="tab" data-target="traktor"><span class="tab-icon">⇄</span><span>Traktor Tools</span></button>
         <button class="tab" data-target="settings"><span class="tab-icon">⚙</span><span>Settings</span></button>
       </nav>
       <div class="top-actions"><button id="fullscreenBtn" class="icon-btn" title="Celá obrazovka">⛶</button><div class="connection"><span class="dot"></span><span id="status">Připraveno</span></div></div>
@@ -24,23 +25,25 @@
 
     <aside class="sidebar">
       <button class="side-item" data-target="home" title="Home"><span>⌂</span><small>Home</small></button><div class="side-divider"></div>
-      <button class="side-item active" data-target="dawomix" title="Playlist Creator"><span>▤</span><small>Playlist</small></button>
-      <button class="side-item" data-target="analyzer" title="Analyzer"><span>◫</span><small>Analyze</small></button>
-      <button class="side-item" data-target="cueflow" title="Cue Point Editor"><span>⌁</span><small>Cues</small></button>
-      <button class="side-item" data-target="tag-editor" title="Tag Editor"><span>✎</span><small>Tags</small></button>
-      <button class="side-item" data-target="traktor" title="Traktor Tools"><span>◈</span><small>Traktor</small></button><div class="side-spacer"></div>
+      <button class="side-item active" data-target="dawomix" title="Playlist Creator"><span>☷</span><small>Playlist</small></button>
+      <button class="side-item" data-target="library" title="Library"><span>▦</span><small>Library</small></button>
+      <button class="side-item" data-target="analyzer" title="Analyzer"><span>⌁</span><small>Analyze</small></button>
+      <button class="side-item" data-target="cueflow" title="Cue Point Editor"><span>◎</span><small>Cues</small></button>
+      <button class="side-item" data-target="tag-editor" title="Tag Editor"><span>◇</span><small>Tags</small></button>
+      <button class="side-item" data-target="traktor" title="Traktor Tools"><span>⇄</span><small>Traktor</small></button><div class="side-spacer"></div>
       <button class="side-item" data-target="settings" title="Settings"><span>⚙</span><small>Settings</small></button>
     </aside>
 
     <main class="workspace">
       <section id="home" class="panel dashboard-panel">
-        <div class="dashboard-head"><div><p class="eyebrow">DAWO MUSIC WORKSPACE</p><h1>Tvoje hudební nástroje na jednom místě.</h1><p>Všechny moduly pracují nad jednou společnou knihovnou.</p></div><div class="workspace-status"><span class="dot"></span><span><b id="homeLibraryCount">0</b> tracků v knihovně</span></div></div>
+        <div class="dashboard-head"><div><p class="eyebrow">DAWO MUSIC WORKSPACE</p><h1>Tvoje hudební nástroje na jednom místě.</h1><p>Playlisty, knihovna, analýza, cue pointy a Traktor nad společnými tracky.</p></div><div class="workspace-status"><span class="dot"></span><span><b id="homeLibraryCount">0</b> tracků v knihovně</span></div></div>
         <div class="module-grid">
-          <button class="module-card live" data-target="dawomix"><span class="module-icon">▤</span><strong>Playlist Creator</strong><small>Tvorba, správa a přenos playlistů</small><em>OPEN</em></button>
-          <button class="module-card live" data-target="analyzer"><span class="module-icon">◫</span><strong>Analyzer</strong><small>Offline BPM, Key, energy a waveform analýza</small><em>OPEN</em></button>
-          <button class="module-card live" data-target="cueflow"><span class="module-icon">⌁</span><strong>Cue Point Editor</strong><small>Hot cues, grid a příprava tracků</small><em>OPEN</em></button>
-          <button class="module-card live" data-target="tag-editor"><span class="module-icon">✎</span><strong>Tag Editor</strong><small>Metadata ze společné knihovny</small><em>OPEN</em></button>
-          <button class="module-card live" data-target="traktor"><span class="module-icon">◈</span><strong>Traktor Tools</strong><small>Export analyzovaných dat a cue bodů</small><em>OPEN</em></button>
+          <button class="module-card live" data-target="dawomix"><span class="module-icon">☷</span><strong>Playlist Creator</strong><small>Tvorba a správa playlistů</small><em>OPEN</em></button>
+          <button class="module-card live" data-target="library"><span class="module-icon">▦</span><strong>Library</strong><small>Samostatná hudební knihovna a import</small><em>OPEN</em></button>
+          <button class="module-card live" data-target="analyzer"><span class="module-icon">⌁</span><strong>Analyzer</strong><small>Offline BPM, Key, beatgrid a energy spectrum</small><em>OPEN</em></button>
+          <button class="module-card live" data-target="cueflow"><span class="module-icon">◎</span><strong>Cue Point Editor</strong><small>Hot cues, grid a příprava tracků</small><em>OPEN</em></button>
+          <button class="module-card live" data-target="tag-editor"><span class="module-icon">◇</span><strong>Tag Editor</strong><small>Metadata ze společné knihovny</small><em>OPEN</em></button>
+          <button class="module-card live" data-target="traktor"><span class="module-icon">⇄</span><strong>Traktor Tools</strong><small>NML export a collection merge</small><em>OPEN</em></button>
           <button class="module-card live" data-target="settings"><span class="module-icon">⚙</span><strong>Settings</strong><small>Nastavení studia a knihovny</small><em>OPEN</em></button>
         </div>
       </section>
@@ -48,8 +51,21 @@
       <iframe id="dawomix" class="panel active" src="dawomix/index.html" title="Playlist Creator"></iframe>
       <iframe id="cueflow" class="panel" src="cueflow/index.html" title="Cue Point Editor"></iframe>
 
+      <section id="library" class="panel native-panel">
+        <div class="tool-head"><div><p class="eyebrow">SHARED MUSIC DATABASE</p><h2>Library</h2><p>Samostatná knihovna tracků. Odtud importuj hudbu a posílej ji dál do Analyzeru, playlistů a Cue Editoru.</p></div><span class="module-state"><b id="libraryModuleCount">0</b> TRACKS</span></div>
+        <div class="library-module-toolbar">
+          <label class="file-action">＋ Přidat audio<input id="libraryModuleFiles" type="file" accept="audio/*" multiple hidden></label>
+          <input id="libraryModuleSearch" class="library-module-search" type="search" placeholder="Hledat title, artist, key, genre…">
+          <button id="libraryModuleSync" class="secondary-action" type="button">↻ Synchronizovat</button>
+        </div>
+        <div class="library-module-table">
+          <div class="library-module-head"><span>TRACK</span><span>ARTIST</span><span>BPM</span><span>KEY</span><span>CUE POINTS</span><span></span></div>
+          <div id="libraryModuleRows"></div>
+        </div>
+      </section>
+
       <section id="analyzer" class="panel native-panel">
-        <div class="tool-head"><div><p class="eyebrow">100% OFFLINE AUDIO ANALYSIS</p><h2>Analyzer</h2><p>BPM, Camelot Key, energy, confidence a waveform lokálně bez internetu.</p></div><span class="module-state"><b id="sharedLibraryCount">0</b> TRACKS</span></div>
+        <div class="tool-head"><div><p class="eyebrow">100% OFFLINE AUDIO ANALYSIS</p><h2>Analyzer</h2><p>BPM, Camelot Key, energy, confidence, beatgrid a energy-spectrum waveform lokálně.</p></div><span class="module-state"><b id="sharedLibraryCount">0</b> TRACKS</span></div>
         <div class="analyzer-toolbar">
           <label class="file-action">＋ Přidat audio<input id="analyzerFiles" type="file" accept="audio/*" multiple hidden></label>
           <button id="syncLibraryButton" class="secondary-action">↻ Synchronizovat knihovnu</button>
@@ -72,12 +88,12 @@
 
       <section id="traktor" class="panel native-panel">
         <div class="tool-head"><div><p class="eyebrow">DJ INTEGRATION</p><h2>Traktor Tools</h2><p>Traktor workflow nad stejnou analyzovanou knihovnou.</p></div><span id="traktorLibraryState" class="module-state">0 TRACKS</span></div>
-        <div class="tool-cards"><article><span>⇄</span><h3>Collection Sync</h3><p>Společná knihovna je připravena jako zdroj pro kolekci.</p><button id="traktorSyncButton" class="secondary-action">Synchronizovat zdroje</button></article><article><span>⌁</span><h3>Cue Transfer</h3><p id="traktorCueStats">0 uložených cue bodů</p></article><article><span>◫</span><h3>Analysis Data</h3><p id="traktorAnalysisStats">0 analyzovaných tracků</p><button id="exportLibraryButton" class="secondary-action">Exportovat JSON</button></article></div>
+        <div class="tool-cards"><article><span>⇄</span><h3>Collection Sync</h3><p>Společná knihovna je připravena jako zdroj pro kolekci.</p><button id="traktorSyncButton" class="secondary-action">Synchronizovat zdroje</button></article><article><span>◎</span><h3>Cue Transfer</h3><p id="traktorCueStats">0 uložených cue bodů</p></article><article><span>⌁</span><h3>Analysis Data</h3><p id="traktorAnalysisStats">0 analyzovaných tracků</p><button id="exportLibraryButton" class="secondary-action">Exportovat JSON</button></article></div>
       </section>
 
       <section id="settings" class="panel native-panel">
         <div class="tool-head"><div><p class="eyebrow">STUDIO</p><h2>Settings</h2><p>Nastavení Dawo Mix Studio a společné knihovny.</p></div><span id="settingsLibraryState" class="module-state">0 TRACKS</span></div>
-        <div class="settings-grid"><label><span>Startovní modul</span><select id="startModule"><option value="dawomix">Playlist Creator</option><option value="analyzer">Analyzer</option><option value="cueflow">Cue Point Editor</option><option value="tag-editor">Tag Editor</option><option value="traktor">Traktor Tools</option><option value="home">Home</option></select></label><label><span>Kompaktní sidebar</span><input id="compactSidebar" type="checkbox"></label><label><span>Zapamatovat poslední modul</span><input id="rememberModule" type="checkbox" checked></label><label><span>Společná knihovna</span><button id="settingsSyncLibrary" class="secondary-action" type="button">Synchronizovat</button></label><label><span>Vymazat pouze společnou cache</span><button id="clearSharedLibrary" class="danger-action" type="button">Vymazat cache</button></label></div>
+        <div class="settings-grid"><label><span>Startovní modul</span><select id="startModule"><option value="dawomix">Playlist Creator</option><option value="library">Library</option><option value="analyzer">Analyzer</option><option value="cueflow">Cue Point Editor</option><option value="tag-editor">Tag Editor</option><option value="traktor">Traktor Tools</option><option value="home">Home</option></select></label><label><span>Kompaktní sidebar</span><input id="compactSidebar" type="checkbox"></label><label><span>Zapamatovat poslední modul</span><input id="rememberModule" type="checkbox" checked></label><label><span>Společná knihovna</span><button id="settingsSyncLibrary" class="secondary-action" type="button">Synchronizovat</button></label><label><span>Vymazat pouze společnou cache</span><button id="clearSharedLibrary" class="danger-action" type="button">Vymazat cache</button></label></div>
       </section>
     </main>
 
@@ -86,6 +102,7 @@
   <script src="shared-library.js"></script>
   <script src="traktor-nml.js"></script>
   <script src="studio.js"></script>
+  <script src="library-module.js"></script>
   <script src="analyzer.js"></script>
   <script src="traktor-collection-ui.js"></script>
   <script src="visual-upgrade.js"></script>
