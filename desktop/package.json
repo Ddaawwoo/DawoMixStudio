@@ -1,0 +1,30 @@
+{
+  "name": "dawomixstudio-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Desktop wrapper for DawoMixStudio",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win portable nsis"
+  },
+  "devDependencies": {
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "cz.dawo.mixstudio",
+    "productName": "DawoMixStudio",
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "../app/**/*"
+    ],
+    "extraMetadata": {
+      "main": "main.cjs"
+    },
+    "win": {
+      "target": ["portable", "nsis"]
+    }
+  }
+}
