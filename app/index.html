@@ -56,8 +56,11 @@
         <div class="library-module-toolbar">
           <label class="file-action">＋ Přidat audio<input id="libraryModuleFiles" type="file" accept="audio/*" multiple hidden></label>
           <input id="libraryModuleSearch" class="library-module-search" type="search" placeholder="Hledat title, artist, key, genre…">
+          <button id="libraryModuleFindDuplicates" class="secondary-action" type="button">≋ Najít duplicity</button>
+          <button id="libraryModuleDeleteDuplicates" class="danger-action" type="button" disabled>⌫ Smazat duplicity</button>
           <button id="libraryModuleSync" class="secondary-action" type="button">↻ Synchronizovat</button>
         </div>
+        <div id="libraryDuplicateSummary" class="library-duplicate-summary" hidden></div>
         <div class="library-module-table">
           <div class="library-module-head"><span>TRACK</span><span>ARTIST</span><span>BPM</span><span>KEY</span><span>CUE POINTS</span><span></span></div>
           <div id="libraryModuleRows"></div>
