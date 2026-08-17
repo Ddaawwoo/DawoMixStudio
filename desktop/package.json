@@ -15,16 +15,11 @@
   "build": {
     "appId": "cz.dawo.mixstudio",
     "productName": "DawoMixStudio",
-    "files": [
-      "main.cjs",
-      "preload.cjs",
-      "../app/**/*"
+    "files": ["main.cjs", "preload.cjs"],
+    "extraResources": [
+      { "from": "../app", "to": "app", "filter": ["**/*"] }
     ],
-    "extraMetadata": {
-      "main": "main.cjs"
-    },
-    "win": {
-      "target": ["portable", "nsis"]
-    }
+    "extraMetadata": { "main": "main.cjs" },
+    "win": { "target": ["portable", "nsis"] }
   }
 }
