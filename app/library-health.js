@@ -1,0 +1,53 @@
+(()=>{
+  if(window.__dawoLibraryHealthLoaded)return;
+  window.__dawoLibraryHealthLoaded=true;
+  const QUEUE_KEY='dawo:workflow:analyzerQueue';
+  const FILTER_KEY='dawo:libraryHealthFilter';
+  const $=s=>document.querySelector(s);
+  const esc=(v='')=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const norm=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\.[a-z0-9]{2,5}$/i,'').replace(/[^a-z0-9]+/g,' ').trim();
+
+  function cuesCount(t){return Array.isArray(t.cues)?t.cues.filter(v=>v!=null&&Number.isFinite(Number(v))).length:0}
+  function hasBpm(t){return Number(t.bpm)>0}
+  function hasKey(t){return !!t.key&&t.key!=='—'&&String(t.key).trim()!==''}
+  function hasWave(t){return Array.isArray(t.waveformData)&&t.waveformData.length>8}
+  function hasGrid(t){return Number(t.bpm)>0&&Number.isFinite(Number(t.downbeat??t.firstBeat))}
+  function ready(t){return hasBpm(t)&&hasKey(t)&&hasGrid(t)&&cuesCount(t)>=8}
+  function dupKey(t){const f=norm(t.fileName||t.name);if(f)return`f:${f}`;const title=norm(t.title),artist=norm(t.artist);return title?`m:${title}|${artist}`:''}
+  function duplicateUids(rows){const groups=new Map();rows.forEach(t=>{const k=dupKey(t);if(!k)return;(groups.get(k)||groups.set(k,[]).get(k)).push(t)});const out=new Set();for(const g of groups.values())if(g.length>1)g.forEach(t=>out.add(t.uid));return out}
+  function metrics(rows){const dup=duplicateUids(rows);const noBpm=rows.filter(t=>!hasBpm(t)),noKey=rows.filter(t=>!hasKey(t)),noWave=rows.filter(t=>!hasWave(t)),noCues=rows.filter(t=>cuesCount(t)<8),readyRows=rows.filter(ready);const attention=rows.filter(t=>!ready(t)||dup.has(t.uid));return{all:rows,noBpm,noKey,noWave,noCues,duplicates:rows.filter(t=>dup.has(t.uid)),ready:readyRows,attention}}
+
+  function style(){if($('#dawoLibraryHealthStyle'))return;const s=document.createElement('style');s.id='dawoLibraryHealthStyle';s.textContent=`
+    .health-shell{max-width:1380px;margin:18px auto 0;border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:17px}.health-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:13px}.health-head h3{margin:0;font-size:17px}.health-head p{margin:5px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.health-score{min-width:76px;text-align:center;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:#0f1318}.health-score strong{display:block;font-size:22px;color:#77bfa2}.health-score small{font-size:8px;color:var(--muted);letter-spacing:.09em}.health-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.health-card{min-height:92px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#10151b;color:var(--text);text-align:left;cursor:pointer;transition:.15s}.health-card:hover{border-color:#46515e;background:#141a21;transform:translateY(-1px)}.health-card strong{display:block;font-size:22px;line-height:1}.health-card span{display:block;margin-top:7px;font-size:10px;font-weight:800}.health-card small{display:block;margin-top:4px;color:var(--muted);font-size:8px;line-height:1.35}.health-card.ok strong{color:#77bfa2}.health-card.warn strong{color:#c9a75f}.health-card.bad strong{color:#c77a84}.health-filter-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;padding:10px 12px;border:1px solid #3b4652;border-radius:10px;background:#141a21;color:#cbd3dc;font-size:10px}.health-filter-banner button{border:1px solid #48535e;border-radius:8px;background:#1a2028;color:#e1e6eb;padding:6px 9px;cursor:pointer}.health-hidden{display:none!important}
+    @media(max-width:900px){.health-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.health-shell{padding:13px}.health-grid{grid-template-columns:repeat(2,1fr);gap:7px}.health-card{min-height:88px;padding:10px}.health-card strong{font-size:19px}.health-head{align-items:center}}
+  `;document.head.appendChild(s)}
+
+  function shell(id,title){const x=document.createElement('section');x.id=id;x.className='health-shell';x.innerHTML=`<div class="health-head"><div><h3>${title}</h3><p>Kontrola metadat, analýzy, cue bodů, duplicit a připravenosti pro Traktor. Kliknutím otevřeš rovnou správný workflow.</p></div><div class="health-score"><strong data-health-score>0%</strong><small>READY</small></div></div><div class="health-grid" data-health-grid></div>`;return x}
+  function inject(){const home=$('#home .module-grid'),settings=$('#dawoSettingsControlCenter')||$('#settings .settings-grid');if(home&&!$('#dawoHealthHome'))home.insertAdjacentElement('afterend',shell('dawoHealthHome','Library Health'));if(settings&&!$('#dawoHealthSettings'))settings.insertAdjacentElement('afterend',shell('dawoHealthSettings','Library Health'))}
+
+  function card(type,count,label,desc,tone='warn'){return `<button class="health-card ${tone}" data-health-action="${type}"><strong>${count}</strong><span>${label}</span><small>${desc}</small></button>`}
+  async function render(){if(!window.DawoLibrary)return;inject();const rows=await DawoLibrary.all(),m=metrics(rows),score=rows.length?Math.round(m.ready.length/rows.length*100):0;document.querySelectorAll('[data-health-score]').forEach(e=>e.textContent=`${score}%`);const html=[
+    card('attention',m.attention.length,'Need Attention','Vše, co ještě není připravené nebo je duplicitní.',m.attention.length?'bad':'ok'),
+    card('bpm',m.noBpm.length,'Bez BPM','Otevřít tyto tracky jako Analyzer queue.',m.noBpm.length?'warn':'ok'),
+    card('key',m.noKey.length,'Bez Key','Otevřít tyto tracky jako Analyzer queue.',m.noKey.length?'warn':'ok'),
+    card('wave',m.noWave.length,'Bez waveformu','Dopočítat analýzu a energy spectrum.',m.noWave.length?'warn':'ok'),
+    card('cues',m.noCues.length,'Bez 8 Cue bodů','Připravit a otevřít v Cue Editoru.',m.noCues.length?'warn':'ok'),
+    card('duplicates',m.duplicates.length,'Duplicity','Filtrovat Library pouze na možné duplicity.',m.duplicates.length?'bad':'ok'),
+    card('ready',m.ready.length,'Ready for Traktor','Otevřít Traktor Tools s připravenými tracky.','ok'),
+    card('all',rows.length,'Celkem tracků','Otevřít celou Library.','ok')
+  ].join('');document.querySelectorAll('[data-health-grid]').forEach(g=>g.innerHTML=html);document.querySelectorAll('[data-health-action]').forEach(b=>b.onclick=()=>act(b.dataset.healthAction,m))}
+
+  function setQueue(rows){sessionStorage.setItem(QUEUE_KEY,JSON.stringify(rows.map(t=>t.uid)))}
+  async function cueDb(){return new Promise((resolve,reject)=>{const r=indexedDB.open('DawoMixStudioCueflowDB',1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('tracks'))r.result.createObjectStore('tracks',{keyPath:'sourceKey'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+  function req(r){return new Promise((resolve,reject)=>{r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+  async function prepCue(rows){const db=await cueDb();for(const t of rows){const sourceKey=`analyzer:${t.uid}`,store=db.transaction('tracks','readwrite').objectStore('tracks'),old=await req(store.get(sourceKey));const cues=Array.from({length:8},(_,i)=>{const v=t.cues?.[i]??t.autoCues?.[i]?.time;return Number.isFinite(Number(v))?Number(v):null});const color=old?.color||'#68b9c7';await req(store.put({...(old||{}),sourceKey,playlistId:'health',playlistName:'Library Health',id:old?.id||Date.now()+Math.random(),title:t.title||t.fileName||'Bez názvu',artist:t.artist||'DawoMix',bpm:Number(t.bpm)||null,key:t.key||'—',duration:Number(t.duration)||180,ready:cues.every(v=>v!=null),color,cover:old?.cover||`linear-gradient(135deg,${color}33,#10151b)`,cues,wave:t.waveformData||old?.wave||null,fileBlob:t.fileBlob||old?.fileBlob||null,fileName:t.fileName||old?.fileName||'',firstBeat:t.firstBeat??null,downbeat:t.downbeat??null,beatInterval:t.beatInterval??null,beatsPerBar:t.beatsPerBar||4,beatgrid:t.beatgrid||[],autoCues:t.autoCues||[],sharedUid:t.uid}))}db.close()}
+
+  function clearLibraryFilter(){sessionStorage.removeItem(FILTER_KEY);document.querySelectorAll('#libraryModuleRows .library-module-row').forEach(r=>r.classList.remove('health-hidden'));$('#dawoHealthFilterBanner')?.remove()}
+  function applyLibraryFilter(rows,label){const ids=new Set(rows.map(t=>String(t.uid)));sessionStorage.setItem(FILTER_KEY,JSON.stringify([...ids]));DawoMixStudio?.showPanel?.('library');setTimeout(()=>{const host=$('#libraryModuleRows');if(!host)return;host.querySelectorAll('.library-module-row[data-library-uid]').forEach(r=>r.classList.toggle('health-hidden',!ids.has(String(r.dataset.libraryUid))));let banner=$('#dawoHealthFilterBanner');if(!banner){banner=document.createElement('div');banner.id='dawoHealthFilterBanner';banner.className='health-filter-banner';host.parentElement?.insertAdjacentElement('beforebegin',banner)}banner.innerHTML=`<span><b>Library Health:</b> ${esc(label)} · ${ids.size} tracků</span><button type="button">Zrušit filtr</button>`;banner.querySelector('button').onclick=clearLibraryFilter;host.querySelector('.library-module-row:not(.health-hidden)')?.scrollIntoView({behavior:'smooth',block:'nearest'})},180)}
+
+  async function act(type,m){const map={bpm:m.noBpm,key:m.noKey,wave:m.noWave};if(map[type]){setQueue(map[type]);DawoMixStudio?.showPanel?.('analyzer');setTimeout(()=>window.DawoWorkflowPro?.installAnalyzerQueue?.(),100);DawoMixStudio?.setStatus?.(`Library Health: ${map[type].length} tracků v Analyzer queue`);return}if(type==='cues'){setQueue(m.noCues);await prepCue(m.noCues);DawoMixStudio?.showPanel?.('cueflow');const f=$('#cueflow');if(f){f.contentWindow?.location.reload()}DawoMixStudio?.setStatus?.(`Library Health: ${m.noCues.length} tracků připraveno v Cue Editoru`);return}if(type==='duplicates'){applyLibraryFilter(m.duplicates,'Duplicity');return}if(type==='attention'){applyLibraryFilter(m.attention,'Need Attention');return}if(type==='all'){clearLibraryFilter();DawoMixStudio?.showPanel?.('library');return}if(type==='ready'){setQueue(m.ready);DawoMixStudio?.showPanel?.('traktor');DawoMixStudio?.setStatus?.(`Ready for Traktor: ${m.ready.length} tracků`);return}}
+
+  function boot(){style();inject();render();window.addEventListener('dawo-library-change',()=>setTimeout(render,50));new MutationObserver(()=>inject()).observe(document.body,{childList:true,subtree:true})}
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot):boot();
+  window.DawoLibraryHealth={render,clearLibraryFilter};
+})();
